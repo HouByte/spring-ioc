@@ -12,6 +12,7 @@ import cn.bugio.spring.mini.exception.ComponentScanException;
 
 import java.io.File;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +30,8 @@ public class SpringMiniApplictionContext {
     private Class configClass;
     //BeanDefinition Map
     private Map<String, BeanDefinition> beanDefinitionMap = new ConcurrentHashMap();
-
+    //SingletonBean Map 单例池
+    private Map<String, Object> singletonBeanMap = new ConcurrentHashMap();
 
     public SpringMiniApplictionContext(Class<?> configClass) {
         this.configClass = configClass;
@@ -66,7 +68,7 @@ public class SpringMiniApplictionContext {
                 }
 
 
-                beanDefinitionMap.put(beanName,null);
+                beanDefinitionMap.put(beanName,beanDefinition);
             }
         }
 
@@ -125,16 +127,52 @@ public class SpringMiniApplictionContext {
     }
 
     private void instanceSingletonBean() {
+        for (Map.Entry<String, BeanDefinition> beanDefinitionEntry : beanDefinitionMap.entrySet()) {
+            String beanName = beanDefinitionEntry.getKey();
+            BeanDefinition beanDefinition = beanDefinitionEntry.getValue();
 
+            if (ScopeEnum.SINGLETON.equals(beanDefinition.getScope())){
+                //已经存在的情况无需重复
+                if (!singletonBeanMap.containsKey(beanName)) {
+                    //创建Bean
+                    Object bean = doCreateBean(beanName, beanDefinition);
+                    //加入单例池
+                    singletonBeanMap.put(beanName, bean);
+                }
+
+            }
+        }
+    }
+
+    public Object doCreateBean(String beanName,BeanDefinition beanDefinition){
+
+        //1.实例化
+        Class beanClass = beanDefinition.getBeanClass();
+        Object o = null;
+        try {
+            o = beanClass.getDeclaredConstructor().newInstance();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+        return o;
     }
 
     public Object getBean(String beanName){
         BeanDefinition beanDefinition = beanDefinitionMap.get(beanName);
-        if (ScopeEnum.PROTOTYPE.equals(beanDefinition.getScope())){
+        if (beanDefinition == null){
+            return null;
+        }else if (ScopeEnum.PROTOTYPE.equals(beanDefinition.getScope())){
             //创建Bean
-
+            return doCreateBean(beanName, beanDefinition);
         } else if (ScopeEnum.SINGLETON.equals(beanDefinition.getScope())){
             //从单例池中拿到Bean
+            return singletonBeanMap.get(beanName);
 
         }
         return null;

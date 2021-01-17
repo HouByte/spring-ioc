@@ -1,5 +1,6 @@
 package cn.bugio.spring.demo;
 
+import cn.bugio.spring.demo.service.UserService;
 import cn.bugio.spring.mini.annotation.ComponentScan;
 import cn.bugio.spring.mini.context.SpringMiniApplictionContext;
 import cn.bugio.spring.demo.service.User;
@@ -18,5 +19,8 @@ public class Test {
 
         // 启动Spring 扫描 ---> 创建非慢加载Bean
         SpringMiniApplictionContext applictionContext = new SpringMiniApplictionContext(Test.class);
+
+        UserService userService = (UserService) applictionContext.getBean("userService");
+        System.out.println(userService);
     }
 }
