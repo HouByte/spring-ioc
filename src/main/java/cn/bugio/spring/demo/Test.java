@@ -22,5 +22,8 @@ public class Test {
 
         UserService userService = (UserService) applictionContext.getBean("userService");
         System.out.println(userService);
+        userService.test();
+        UserService userService2 = (UserService) applictionContext.getBean("userService");
+        System.out.println(userService2);
     }
 }

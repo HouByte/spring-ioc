@@ -1,17 +1,16 @@
 package cn.bugio.spring.mini.context;
 
 import cn.bugio.spring.demo.Test;
-import cn.bugio.spring.mini.annotation.Component;
-import cn.bugio.spring.mini.annotation.ComponentScan;
-import cn.bugio.spring.mini.annotation.Lazy;
-import cn.bugio.spring.mini.annotation.Scope;
-import cn.bugio.spring.mini.bean.BeanDefinition;
-import cn.bugio.spring.mini.bean.BeanUtil;
+import cn.bugio.spring.mini.annotation.*;
+import cn.bugio.spring.mini.bean.*;
 import cn.bugio.spring.mini.constant.ScopeEnum;
+import cn.bugio.spring.mini.exception.BeanException;
 import cn.bugio.spring.mini.exception.ComponentScanException;
+import cn.bugio.spring.mini.exception.ReflexException;
 
 import java.io.File;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -33,6 +32,7 @@ public class SpringMiniApplictionContext {
     //SingletonBean Map 单例池
     private Map<String, Object> singletonBeanMap = new ConcurrentHashMap();
 
+    private List<BeanPostProcessor> beanPostProcessorList = new ArrayList<>();
     public SpringMiniApplictionContext(Class<?> configClass) {
         this.configClass = configClass;
 
@@ -43,6 +43,17 @@ public class SpringMiniApplictionContext {
         for (Class aClass : classList) {
             //过滤 如果存在组件注解加入Bean
             if (aClass.isAnnotationPresent(Component.class)) {
+
+                //BeanPostProcessor
+                if (BeanPostProcessor.class.isAssignableFrom(aClass)) {
+                    try {
+                        BeanPostProcessor instance = (BeanPostProcessor) aClass.getDeclaredConstructor().newInstance();
+                        beanPostProcessorList.add(instance);
+                    } catch (Exception e) {
+                        throw new ReflexException(e.toString());
+                    }
+                }
+
                 //得到BeanName
                 Component componentAnnotation = (Component)aClass.getAnnotation(Component.class);
                 String beanName = componentAnnotation.value();
@@ -69,6 +80,7 @@ public class SpringMiniApplictionContext {
 
 
                 beanDefinitionMap.put(beanName,beanDefinition);
+
             }
         }
 
@@ -148,19 +160,47 @@ public class SpringMiniApplictionContext {
 
         //1.实例化
         Class beanClass = beanDefinition.getBeanClass();
-        Object o = null;
+        Object bean = null;
         try {
-            o = beanClass.getDeclaredConstructor().newInstance();
-        } catch (InstantiationException e) {
+            bean = beanClass.getDeclaredConstructor().newInstance();
+
+            //2.属性填充
+            Field[] declaredFields = beanClass.getDeclaredFields();
+            //扫描字段
+            for (Field declaredField : declaredFields) {
+                if (declaredField.isAnnotationPresent(Autowired.class)) {
+                    //得到值
+                    Object fieldBean = getBean(declaredField.getName());
+                    declaredField.setAccessible(true);
+                    //赋值
+                    declaredField.set(bean,fieldBean);
+                }
+            }
+
+            //3.Aware
+            if (bean instanceof BeanNameAware){
+                ((BeanNameAware)bean).setBeanName(beanName);
+            }
+
+            //初始化之前
+            for (BeanPostProcessor beanPostProcessor : beanPostProcessorList) {
+                bean = beanPostProcessor.postProcessBeforeInitialization(bean,beanName);
+            }
+
+            //4.InitializingBean
+            if (bean instanceof InitializingBean){
+                ((InitializingBean)bean).afterPropertiesSet();
+            }
+
+            //初始化之后
+            for (BeanPostProcessor beanPostProcessor : beanPostProcessorList) {
+                bean = beanPostProcessor.postProcessAfterInitialization(bean,beanName);
+            }
+        } catch (Exception e) {
             e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
+            throw new BeanException("doCreateBean : " + e.toString());
         }
-        return o;
+        return bean;
     }
 
     public Object getBean(String beanName){
@@ -172,7 +212,13 @@ public class SpringMiniApplictionContext {
             return doCreateBean(beanName, beanDefinition);
         } else if (ScopeEnum.SINGLETON.equals(beanDefinition.getScope())){
             //从单例池中拿到Bean
-            return singletonBeanMap.get(beanName);
+            Object bean = singletonBeanMap.get(beanName);
+            if (null == bean){
+                bean = doCreateBean(beanName,beanDefinition);
+                singletonBeanMap.put(beanName,bean);
+            }
+
+            return bean;
 
         }
         return null;

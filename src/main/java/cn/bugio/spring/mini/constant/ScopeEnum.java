@@ -11,5 +11,5 @@ public interface ScopeEnum {
     //单例
     public final String SINGLETON="singleton";
     //原型
-    public final String PROTOTYPE="pototype";
+    public final String PROTOTYPE="prototype";
 }
