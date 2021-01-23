@@ -10,7 +10,10 @@ public class BeanUtil {
 
     public static String getDefaultBeanName(Class clazz){
         String beanName = clazz.getName();
-        beanName = beanName.substring(0,1).toLowerCase() + beanName.substring(1);
-        return beanName;
+        char[] chars = beanName.substring(beanName.lastIndexOf(".")+1).toCharArray();
+        if (chars[0] <= 90 && chars[0] >= 65) {
+            chars[0] += 32;
+        }
+        return new String(chars);
     }
 }

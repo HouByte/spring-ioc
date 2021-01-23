@@ -7,14 +7,14 @@ import lombok.NoArgsConstructor;
 /**
  * @author Vincent Vic
  * @version 1.0
- * @Description 组件扫描异常
- * @since 2021/1/17 21:31
+ * @Description
+ * @since 2021/1/21 22:14
  */
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class ComponentScanException extends RuntimeException{
+public class BindException extends RuntimeException{
 
     private String msg;
 }

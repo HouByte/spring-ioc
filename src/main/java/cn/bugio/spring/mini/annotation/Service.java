@@ -8,18 +8,12 @@ import java.lang.annotation.Target;
 /**
  * @author Vincent Vic
  * @version 1.0
- * @Description 自动装配
- * @since 2021/1/17 20:17
+ * @Description 控制注解
+ * @since 2021/1/20 19:20
  */
 
+@Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.FIELD,ElementType.METHOD,ElementType.CONSTRUCTOR })
-public @interface Autowired {
-
-    /**
-     * BeanName
-     * @default 字段名
-     */
+public @interface Service {
     String value() default "";
-
 }

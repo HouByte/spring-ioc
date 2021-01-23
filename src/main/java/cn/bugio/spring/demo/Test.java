@@ -1,9 +1,13 @@
 package cn.bugio.spring.demo;
 
 import cn.bugio.spring.demo.service.UserService;
+import cn.bugio.spring.demo.service.impl.UserInfoService;
 import cn.bugio.spring.mini.annotation.ComponentScan;
+import cn.bugio.spring.mini.constant.DispatchRequest;
 import cn.bugio.spring.mini.context.SpringMiniApplictionContext;
-import cn.bugio.spring.demo.service.User;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Vincent Vic
@@ -23,7 +27,28 @@ public class Test {
         UserService userService = (UserService) applictionContext.getBean("userService");
         System.out.println(userService);
         userService.test();
-        UserService userService2 = (UserService) applictionContext.getBean("userService");
-        System.out.println(userService2);
+        UserInfoService userInfoService = (UserInfoService) applictionContext.getBean("userInfoService");
+        System.out.println(userInfoService);
+
+
+        Map<String,String[]> params = new HashMap<>();
+        String[] name = new String[]{"asdsdf"};
+        String[] id = new String[]{"123456"};
+        String[] addr = new String[]{"zxcvv"};
+        params.put("name",name);
+        params.put("id",id);
+        params.put("addr",addr);
+
+        DispatchRequest dispatchRequest = new DispatchRequest();
+        dispatchRequest.setContextPath("");
+        dispatchRequest.setParams(params);
+        dispatchRequest.setUri("/demo/test");
+
+        try {
+            applictionContext.doDispatch(dispatchRequest);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 }
