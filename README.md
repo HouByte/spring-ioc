@@ -1,4 +1,4 @@
-# netty-rest-server
+# spring-mini
 基于Netty实现的高性能RESTful服务框架
 
 ## 基于Netty开发
