@@ -9,6 +9,7 @@ import cn.bugio.spring.mini.exception.ComponentScanException;
 import cn.bugio.spring.mini.exception.ReflexException;
 import cn.bugio.spring.mini.util.BeanUtil;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.net.URL;
@@ -25,6 +26,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 
 @Data
+@Slf4j
 public class BeanDefinitionReader {
 
     //配置读取
@@ -173,7 +175,7 @@ public class BeanDefinitionReader {
             if (beanDefinitionMap.containsKey(beanName)){
                 throw new BeanException( "It already exists :" + beanName);
             }
-
+            log.info("add ioc bean :" + beanName);
             beanDefinitionMap.put(beanName,beanDefinition);
         }
 
@@ -185,6 +187,7 @@ public class BeanDefinitionReader {
             try {
                 BeanPostProcessor instance = (BeanPostProcessor) aClass.getDeclaredConstructor().newInstance();
                 beanPostProcessorList.add(instance);
+                log.info("add bean post processor list :" + aClass.getName());
             } catch (Exception e) {
                 throw new ReflexException(e.toString());
             }

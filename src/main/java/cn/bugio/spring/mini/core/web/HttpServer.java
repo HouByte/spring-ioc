@@ -80,22 +80,6 @@ public class HttpServer {
         // 设置监听端口号
         WebServer server = new WebServer(config.getPort());
 
-        //扫描ExceptionHandler or Interceptor
-        for (Map.Entry<String, BeanDefinition> beanDefinitionEntry : BeanRegistry.getBeanDefinitionMap().entrySet()) {
-            Class beanClass = beanDefinitionEntry.getValue().getBeanClass();
-            if (beanClass.isAssignableFrom(ExceptionHandler.class)) {
-                // 全局异常处理
-                ExceptionHandlerRegistry.setExceptionHandler((ExceptionHandler) BeanFactory.getBean(beanClass));
-            } else if (beanClass.isAssignableFrom(Interceptor.class)) {
-                String[] ignoreMapping = new String[0];
-                if (beanClass.isAnnotationPresent(IgnoreMapping.class)){
-                    ignoreMapping = ((IgnoreMapping)beanClass.getAnnotation(IgnoreMapping.class)).excludeMapping();
-                }
-                server.addInterceptor((Interceptor) BeanFactory.getBean(beanClass), ignoreMapping);
-            }
-
-        }
-
         // 设置Http最大内容长度（默认 为10M）
         server.setMaxContentLength(config.getMaxContentLength());
 

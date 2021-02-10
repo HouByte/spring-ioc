@@ -75,8 +75,6 @@ public class SpringMiniBootApplication {
      */
     private static boolean lodingConfigFile(Class clazz,boolean flag, HttpServerConfig config, Integer port) {
 
-
-        System.out.println("package:"+clazz.getPackage().getName());
         try {
             Map<String, Object> server = YamlUtil.getTypePropertieMap("server");
             if (server == null){

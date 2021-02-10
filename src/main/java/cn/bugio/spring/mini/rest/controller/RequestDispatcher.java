@@ -46,7 +46,10 @@ public final class RequestDispatcher {
 
         // 执行拦截器
         java.util.Stack<Interceptor> executedInterceptors = new java.util.Stack<Interceptor>();
+        System.out.println("---------------");
+        System.out.println(InterceptorRegistry.getInterceptors());
         for (Interceptor interceptor : InterceptorRegistry.getInterceptors()) {
+            System.out.println("121");
             if (this.allowExecuteInterceptor(request.uri(), interceptor)) {
                 executedInterceptors.push(interceptor);
                 if (!interceptor.preHandle(request, response)) {

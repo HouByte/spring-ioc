@@ -6,6 +6,7 @@ import cn.bugio.spring.mini.constant.ScopeEnum;
 import cn.bugio.spring.mini.core.beans.config.BeanDefinition;
 import cn.bugio.spring.mini.core.beans.support.*;
 import cn.bugio.spring.mini.exception.*;
+import cn.bugio.spring.mini.util.BeanUtil;
 import lombok.Data;
 
 import java.lang.reflect.Field;
@@ -61,7 +62,7 @@ public class BeanFactory {
      */
     public static Object getBean(Class clazz){
         //得到BeanName
-        String beanName = null ;//BeanUtil.getBeanName(clazz);
+        String beanName = BeanUtil.getBeanName(clazz);
         return getBean(beanName);
     }
 

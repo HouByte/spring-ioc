@@ -1,7 +1,13 @@
 package cn.bugio.spring.mini.core.beans.support;
 
+import cn.bugio.spring.mini.annotations.IgnoreMapping;
 import cn.bugio.spring.mini.constant.ScopeEnum;
 import cn.bugio.spring.mini.core.beans.config.BeanDefinition;
+import cn.bugio.spring.mini.rest.controller.ExceptionHandler;
+import cn.bugio.spring.mini.rest.controller.ExceptionHandlerRegistry;
+import cn.bugio.spring.mini.rest.interceptor.Interceptor;
+import cn.bugio.spring.mini.rest.interceptor.InterceptorRegistry;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
 
@@ -11,6 +17,7 @@ import java.util.Map;
  * @Description
  * @since 2021/1/25
  */
+@Slf4j
 public class BeanConfig {
 
     //获取配置类class
@@ -28,9 +35,32 @@ public class BeanConfig {
         //读取
         BeanRegistry.setBeanPostProcessorList( reader.doBeanPostProcessorList());
 
+        //2.扫描异常和拦截处理器
+        doExceptionOrInterceptorHandler();
+
 
         //基于class创建单例Bean IOC
         doInstanceSingletonBean();
+    }
+
+    private void doExceptionOrInterceptorHandler() {
+        //扫描ExceptionHandler or Interceptor
+        for (Map.Entry<String, BeanDefinition> beanDefinitionEntry : BeanRegistry.getBeanDefinitionMap().entrySet()) {
+            Class beanClass = beanDefinitionEntry.getValue().getBeanClass();
+            if (ExceptionHandler.class.isAssignableFrom(beanClass)) {
+                log.info("add ExceptionHandler : "+beanClass.getName());
+                // 全局异常处理
+                ExceptionHandlerRegistry.setExceptionHandler((ExceptionHandler) BeanFactory.getBean(beanClass));
+            } else if (Interceptor.class.isAssignableFrom(beanClass) ) {
+                log.info("add Interceptor : "+beanClass.getName());
+                String[] ignoreMapping = new String[0];
+                if (beanClass.isAnnotationPresent(IgnoreMapping.class)){
+                    ignoreMapping = ((IgnoreMapping)beanClass.getAnnotation(IgnoreMapping.class)).excludeMapping();
+                }
+                InterceptorRegistry.addInterceptor((Interceptor) BeanFactory.getBean(beanClass), ignoreMapping);
+            }
+
+        }
     }
 
     private void doInstanceSingletonBean() {
@@ -47,6 +77,7 @@ public class BeanConfig {
                     Object bean = factoryBean.doCreateBean(beanName, beanDefinition);
                     //加入单例池
                     BeanRegistry.registrySingletonBean(beanName, bean);
+                    log.info("registry Singleton Bean :" + beanName);
                 }
 
             }
