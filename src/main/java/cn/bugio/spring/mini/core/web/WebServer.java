@@ -53,11 +53,6 @@ public final class WebServer {
     private static List<String> ignoreUrls = new ArrayList<>(16);
     
     /**
-     * 以上处理器
-     */
-    private static ExceptionHandler exceptionHandler;
-    
-    /**
      * Http 最大内容长度，默认为10M。
      */
     private int maxContentLength = 1024 * 1024 * 10;
@@ -113,15 +108,7 @@ public final class WebServer {
     public static List<String> getIgnoreUrls() {
         return ignoreUrls;
     }
-    
-    public static ExceptionHandler getExceptionHandler() {
-        return exceptionHandler;
-    }
-    
-    public static void setExceptionHandler(ExceptionHandler handler) {
-        exceptionHandler = handler;
-    }
-    
+
     /**
      * 启动服务
      * @throws InterruptedException 
@@ -134,7 +121,7 @@ public final class WebServer {
         NioEventLoopGroup bossGroup = new NioEventLoopGroup(this.bossThreads);
         // Worker处理nio的Read和Write事件（通道的I/O事件）
         NioEventLoopGroup workerGroup = new NioEventLoopGroup(this.workerThreads);
-        
+
         try {
             // handler在初始化时就会执行，而childHandler会在客户端成功connect后才执行。
             ServerBootstrap bootstrap = new ServerBootstrap();

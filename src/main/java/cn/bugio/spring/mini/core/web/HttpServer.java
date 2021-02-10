@@ -5,6 +5,7 @@ import cn.bugio.spring.mini.core.beans.config.BeanDefinition;
 import cn.bugio.spring.mini.core.beans.support.BeanFactory;
 import cn.bugio.spring.mini.core.beans.support.BeanRegistry;
 import cn.bugio.spring.mini.rest.controller.ExceptionHandler;
+import cn.bugio.spring.mini.rest.controller.ExceptionHandlerRegistry;
 import cn.bugio.spring.mini.rest.interceptor.Interceptor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -84,7 +85,7 @@ public class HttpServer {
             Class beanClass = beanDefinitionEntry.getValue().getBeanClass();
             if (beanClass.isAssignableFrom(ExceptionHandler.class)) {
                 // 全局异常处理
-                WebServer.setExceptionHandler((ExceptionHandler) BeanFactory.getBean(beanClass));
+                ExceptionHandlerRegistry.setExceptionHandler((ExceptionHandler) BeanFactory.getBean(beanClass));
             } else if (beanClass.isAssignableFrom(Interceptor.class)) {
                 String[] ignoreMapping = new String[0];
                 if (beanClass.isAnnotationPresent(IgnoreMapping.class)){

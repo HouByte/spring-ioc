@@ -64,8 +64,8 @@ final class RequestHandler {
             HttpContextHolder.setResponse(requestInfo.getResponse());
             
             // 全局异常处理
-            if(WebServer.getExceptionHandler() != null) {
-                WebServer.getExceptionHandler().doHandle(new ResourceNotFoundException());
+            if(ExceptionHandlerRegistry.getExceptionHandler() != null) {
+                ExceptionHandlerRegistry.getExceptionHandler().doHandle(new ResourceNotFoundException());
                 return null;
             }
             throw new ResourceNotFoundException();
@@ -136,8 +136,8 @@ final class RequestHandler {
             return writeResponse((ResponseEntity<?>)result, mapping.getJsonResponse());
         } catch (Exception e) {
             // 全局异常处理
-            if(WebServer.getExceptionHandler() != null) {
-                WebServer.getExceptionHandler().doHandle(e);
+            if(ExceptionHandlerRegistry.getExceptionHandler() != null) {
+                ExceptionHandlerRegistry.getExceptionHandler().doHandle(e);
                 return null;
             }
             throw new HandleRequestException(e);
