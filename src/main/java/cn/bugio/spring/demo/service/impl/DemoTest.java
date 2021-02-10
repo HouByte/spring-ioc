@@ -1,12 +1,10 @@
 package cn.bugio.spring.demo.service.impl;
 
-import cn.bugio.spring.mini.annotation.Controller;
-import cn.bugio.spring.mini.annotation.Mapping;
-import cn.bugio.spring.mini.annotation.RequestMapping;
-import cn.bugio.spring.mini.annotation.RequestParam;
+import cn.bugio.spring.mini.annotations.RestController;
+import cn.bugio.spring.mini.annotations.RequestMapping;
+import cn.bugio.spring.mini.annotations.RequestParam;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+
 
 /**
  * @author Vincent Vic
@@ -14,11 +12,11 @@ import javax.servlet.http.HttpServletResponse;
  * @Description
  * @since 2021/1/22 19:19
  */
-@Controller
+@RestController
 @RequestMapping("/demo/")
 public class DemoTest {
 
-    @RequestMapping("test")
+
     public void test(@RequestParam("id") String id, @RequestParam("name") String name, @RequestParam("addr") String addr){
         System.out.println(id+","+name+","+addr+",");
     }

@@ -7,8 +7,8 @@ import lombok.NoArgsConstructor;
 /**
  * @author Vincent Vic
  * @version 1.0
- * @Description
- * @since 2021/1/21 22:14
+ * @Description 绑定异常
+ * @since 2021/1/21
  */
 
 @NoArgsConstructor

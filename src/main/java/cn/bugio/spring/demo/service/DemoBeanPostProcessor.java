@@ -1,7 +1,7 @@
 package cn.bugio.spring.demo.service;
 
-import cn.bugio.spring.mini.annotation.Component;
-import cn.bugio.spring.mini.bean.BeanPostProcessor;
+import cn.bugio.spring.mini.annotations.Component;
+import cn.bugio.spring.mini.core.beans.support.BeanPostProcessor;
 import cn.bugio.spring.mini.exception.BeanException;
 
 /**

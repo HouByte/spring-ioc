@@ -1,9 +1,11 @@
 package cn.bugio.spring.demo.service;
 
-import cn.bugio.spring.mini.annotation.*;
-import cn.bugio.spring.mini.bean.BeanNameAware;
-import cn.bugio.spring.mini.bean.InitializingBean;
-import cn.bugio.spring.mini.constant.RequestMethod;
+import cn.bugio.spring.mini.annotations.*;
+import cn.bugio.spring.mini.annotations.Autowired;
+import cn.bugio.spring.mini.annotations.RestController;
+import cn.bugio.spring.mini.core.beans.support.BeanNameAware;
+import cn.bugio.spring.mini.core.beans.support.InitializingBean;
+import cn.bugio.spring.mini.rest.constant.ResponseEntity;
 import lombok.Data;
 
 /**
@@ -12,7 +14,8 @@ import lombok.Data;
  * @Description
  * @since 2021/1/17 20:20
  */
-@Controller("userService")
+@RestController("userService")
+@RequestMapping("/user/")
 @Data
 public class UserService implements BeanNameAware, InitializingBean {
 
@@ -23,22 +26,24 @@ public class UserService implements BeanNameAware, InitializingBean {
 
     private String userName;
 
-    @RequestMapping(value = "/app",method = RequestMethod.POST)
-    public void test(){
+
+    @GetMapping("XXX")
+    public ResponseEntity<?> test(){
         System.out.println(user);
+        return ResponseEntity.ok(user);
     }
 
-    @RequestMapping(value = "/app2",method = RequestMethod.POST)
+
     public void test2(String name){
         System.out.println(user);
     }
 
-    @Override
+
     public void setBeanName(String beanName) {
         this.beanName = beanName;
     }
 
-    @Override
+
     public void afterPropertiesSet() {
         userName = user.getName();
     }

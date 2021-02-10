@@ -1,11 +1,12 @@
 package cn.bugio.spring.demo.service.impl;
 
 import cn.bugio.spring.demo.service.User;
-import cn.bugio.spring.mini.annotation.Autowired;
-import cn.bugio.spring.mini.annotation.Controller;
-import cn.bugio.spring.mini.annotation.RequestMapping;
-import cn.bugio.spring.mini.bean.BeanNameAware;
-import cn.bugio.spring.mini.bean.InitializingBean;
+import cn.bugio.spring.mini.annotations.Autowired;
+
+import cn.bugio.spring.mini.annotations.RequestMapping;
+import cn.bugio.spring.mini.annotations.RestController;
+import cn.bugio.spring.mini.core.beans.support.BeanNameAware;
+import cn.bugio.spring.mini.core.beans.support.InitializingBean;
 import cn.bugio.spring.mini.constant.RequestMethod;
 import lombok.Data;
 
@@ -15,7 +16,7 @@ import lombok.Data;
  * @Description
  * @since 2021/1/17 20:20
  */
-@Controller("userInfoService")
+@RestController("userInfoService")
 @RequestMapping("/apps/")
 @Data
 public class UserInfoService implements BeanNameAware, InitializingBean {
@@ -27,15 +28,6 @@ public class UserInfoService implements BeanNameAware, InitializingBean {
 
     private String userName;
 
-    @RequestMapping(value = "/app121",method = RequestMethod.POST)
-    public void test(){
-        System.out.println(user);
-    }
-
-    @RequestMapping(value = "/app12",method = RequestMethod.POST)
-    public void test2(String name){
-        System.out.println(user);
-    }
 
     @Override
     public void setBeanName(String beanName) {

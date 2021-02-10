@@ -1,6 +1,6 @@
 package cn.bugio.spring.demo.service;
 
-import cn.bugio.spring.mini.annotation.Component;
+import cn.bugio.spring.mini.annotations.Component;
 import lombok.Data;
 
 /**

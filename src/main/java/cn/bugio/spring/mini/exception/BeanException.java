@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
  * @author Vincent Vic
  * @version 1.0
  * @Description Bean 异常
- * @since 2021/1/17 21:31
+ * @since 2021/1/17
  */
 
 @NoArgsConstructor
