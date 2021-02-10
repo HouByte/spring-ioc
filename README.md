@@ -93,7 +93,13 @@ public final class CorsInterceptor implements Interceptor {
 
 }
 ```
-
+## 配置
+```yaml
+server:
+  port: 9696   #端口号
+  maxContentLength: 1024
+  controllerBasePackage: cn.bugio.server
+```
 ## 启动服务
 ```java
 @ComponentScan("cn.bugio.spring.demo.service")
